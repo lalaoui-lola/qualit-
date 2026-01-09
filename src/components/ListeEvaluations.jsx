@@ -8,6 +8,10 @@ function ListeEvaluations() {
   const [telepros, setTelepros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvaluation, setSelectedEvaluation] = useState(null);
+  const [editingEvaluation, setEditingEvaluation] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState('');
 
   // Filtres
   const [filters, setFilters] = useState({
@@ -248,6 +252,83 @@ function ListeEvaluations() {
     }
   };
 
+  const openEditModal = (evaluation) => {
+    setEditingEvaluation(evaluation);
+    setEditFormData({ ...evaluation });
+    setEditError('');
+  };
+
+  const closeEditModal = () => {
+    setEditingEvaluation(null);
+    setEditFormData({});
+    setEditError('');
+  };
+
+  const handleEditChange = (field, value) => {
+    setEditFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleEditNoteChange = (critereId, value) => {
+    const numValue = parseInt(value) || 0;
+    setEditFormData(prev => ({ ...prev, [`note_${critereId}`]: numValue }));
+  };
+
+  const calculateEditNoteFinale = () => {
+    const criteres = editingEvaluation?.type_evaluation === 'absent_rdv' 
+      ? CRITERES_ABSENT_RDV 
+      : CRITERES;
+    
+    const totalPoints = criteres.reduce((sum, c) => sum + (editFormData[`note_${c.id}`] || 0), 0);
+    const maxTotal = criteres.reduce((sum, c) => sum + c.maxPoints, 0);
+    return Math.round((totalPoints / maxTotal) * 100);
+  };
+
+  const saveEditEvaluation = async () => {
+    setEditLoading(true);
+    setEditError('');
+
+    try {
+      const tableName = editingEvaluation.type_evaluation === 'absent_rdv' 
+        ? 'evaluations_absent_rdv' 
+        : 'evaluations_appels';
+
+      // Calculer la note finale
+      const noteFinale = calculateEditNoteFinale();
+
+      const updateData = {
+        ...editFormData,
+        note_finale: noteFinale
+      };
+
+      // Supprimer les champs qui ne doivent pas être mis à jour
+      delete updateData.id;
+      delete updateData.created_at;
+      delete updateData.type_evaluation;
+
+      const { error } = await supabase
+        .from(tableName)
+        .update(updateData)
+        .eq('id', editingEvaluation.id);
+
+      if (error) throw error;
+
+      // Mettre à jour la liste locale
+      setEvaluations(prev => prev.map(e => 
+        e.id === editingEvaluation.id 
+          ? { ...e, ...updateData, note_finale: noteFinale }
+          : e
+      ));
+
+      closeEditModal();
+      fetchEvaluations(); // Rafraîchir pour avoir les données à jour
+    } catch (error) {
+      console.error('Erreur modification:', error);
+      setEditError('Erreur lors de la modification');
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
   const printEvaluation = (evaluation) => {
     const printWindow = window.open('', '_blank');
     
@@ -436,6 +517,22 @@ function ListeEvaluations() {
     { id: 'adaptation_client', label: "S'adapter au niveau du client", maxPoints: 7 },
   ];
 
+  const CRITERES_ABSENT_RDV = [
+    { id: 'presentation', label: 'Se présenter', maxPoints: 5 },
+    { id: 'identite_client', label: "Confirmer l'identité du client", maxPoints: 5 },
+    { id: 'raison_absence', label: "Comprendre la raison de l'absence", maxPoints: 10 },
+    { id: 'fixer_rdv', label: 'Fixer un nouveau RDV', maxPoints: 10 },
+    { id: 'sms_appel', label: "Envoyer un SMS pendant l'appel", maxPoints: 10 },
+    { id: 'documents_recap', label: 'Rappeler les documents et le récapitulatif', maxPoints: 5 },
+    { id: 'appel_confirmation', label: "Informer sur l'appel de confirmation", maxPoints: 5 },
+    { id: 'reception_sms', label: 'Vérifier la réception du SMS', maxPoints: 10 },
+    { id: 'ton_voix', label: 'Le ton de la voix', maxPoints: 7 },
+    { id: 'ecoute_active', label: 'Écoute active', maxPoints: 7 },
+    { id: 'reponse_questions', label: 'Répondre aux questions', maxPoints: 7 },
+    { id: 'intelligence_emotionnelle', label: 'Intelligence émotionnelle', maxPoints: 7 },
+    { id: 'adaptation_client', label: "S'adapter au niveau du client", maxPoints: 7 },
+  ];
+
   return (
     <div className="liste-evaluations-container">
       <div className="liste-header">
@@ -604,6 +701,16 @@ function ListeEvaluations() {
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                           <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </button>
+                      <button 
+                        className="btn-action btn-edit"
+                        onClick={() => openEditModal(evaluation)}
+                        title="Modifier"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                         </svg>
                       </button>
                       <button 

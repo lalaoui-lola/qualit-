@@ -94,19 +94,45 @@ function Agents() {
       return;
     }
 
+    setError('');
+    setSuccess('');
+
     try {
+      // Vérifier si l'agent a des évaluations liées
+      const { data: evalAppels } = await supabase
+        .from('evaluations_appels')
+        .select('id')
+        .eq('agent_id', id)
+        .limit(1);
+
+      const { data: evalAbsent } = await supabase
+        .from('evaluations_absent_rdv')
+        .select('id')
+        .eq('agent_id', id)
+        .limit(1);
+
+      if ((evalAppels && evalAppels.length > 0) || (evalAbsent && evalAbsent.length > 0)) {
+        setError('Impossible de supprimer cet agent car il a des évaluations associées. Supprimez d\'abord ses évaluations.');
+        return;
+      }
+
       const { error } = await supabase
         .from('agents')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === '23503' || error.message?.includes('foreign key')) {
+          throw new Error('Impossible de supprimer cet agent car il a des évaluations associées.');
+        }
+        throw error;
+      }
 
       setSuccess('Agent supprimé avec succès');
       fetchAgents();
     } catch (error) {
       console.error('Erreur:', error);
-      setError('Erreur lors de la suppression');
+      setError(error.message || 'Erreur lors de la suppression');
     }
   };
 
