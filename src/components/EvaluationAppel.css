@@ -1,0 +1,789 @@
+/* ========================================
+   EVALUATION APPEL - DESIGN MODERNE
+   ======================================== */
+
+.evaluation-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  min-height: 100vh;
+}
+
+.evaluation-container h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.evaluation-container h2::before {
+  content: '';
+  width: 6px;
+  height: 2.5rem;
+  background: linear-gradient(180deg, #6366f1 0%, #a855f7 100%);
+  border-radius: 3px;
+}
+
+/* ========================================
+   FORM SECTIONS - GLASSMORPHISM STYLE
+   ======================================== */
+
+.form-section {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.form-section:hover {
+  box-shadow: 
+    0 10px 25px -5px rgba(99, 102, 241, 0.15),
+    0 20px 40px -10px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  transform: translateY(-2px);
+}
+
+.form-section h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid transparent;
+  background: linear-gradient(90deg, #e2e8f0 0%, transparent 100%);
+  background-size: 100% 2px;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.form-section h3::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  border-radius: 50%;
+}
+
+/* ========================================
+   FORM GRID & INPUTS
+   ======================================== */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.75rem;
+}
+
+.form-group {
+  margin-bottom: 0.5rem;
+}
+
+.form-group label {
+  display: block;
+  color: #475569;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.875rem 1.125rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.875rem;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1e293b;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #94a3b8;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: #c7d2fe;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 
+    0 0 0 4px rgba(99, 102, 241, 0.15),
+    0 4px 12px rgba(99, 102, 241, 0.1);
+  background: white;
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+  padding-right: 3rem;
+}
+
+/* ========================================
+   DUREE INPUT GROUP
+   ======================================== */
+
+.duree-input-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.duree-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.duree-field input {
+  width: 80px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.75rem;
+}
+
+.duree-field span {
+  color: #64748b;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   FILE UPLOAD - MODERN STYLE
+   ======================================== */
+
+.file-upload-wrapper {
+  position: relative;
+}
+
+.file-input-hidden {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.file-upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  border: 2px dashed #c7d2fe;
+  border-radius: 0.875rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: #6366f1;
+  font-weight: 500;
+}
+
+.file-upload-btn:hover {
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+  border-color: #6366f1;
+  transform: translateY(-1px);
+}
+
+.file-upload-btn svg {
+  flex-shrink: 0;
+}
+
+/* ========================================
+   SCORE SUMMARY - GRADIENT BANNER
+   ======================================== */
+
+.score-summary {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  color: white;
+  padding: 1.25rem 1.75rem;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  box-shadow: 
+    0 10px 25px -5px rgba(99, 102, 241, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.score-summary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.score-summary span {
+  position: relative;
+  z-index: 1;
+}
+
+.score-summary strong {
+  font-size: 1.5rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ========================================
+   CRITERES LIST - CARDS
+   ======================================== */
+
+.criteres-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.critere-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.critere-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 
+    0 8px 25px rgba(99, 102, 241, 0.12),
+    0 0 0 1px rgba(99, 102, 241, 0.05);
+  transform: translateY(-2px);
+}
+
+.critere-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #fafbff 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.critere-number {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.critere-label {
+  flex: 1;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 1.05rem;
+}
+
+.critere-max {
+  color: #8b5cf6;
+  font-size: 0.95rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%);
+  padding: 0.4rem 0.9rem;
+  border-radius: 2rem;
+}
+
+.critere-content {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2rem;
+  background: white;
+}
+
+.note-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.note-input-group label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.note-input {
+  width: 70px;
+  padding: 0.6rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: #6366f1;
+  background: linear-gradient(135deg, #fafbff 0%, #ffffff 100%);
+  transition: all 0.2s ease;
+}
+
+.note-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+}
+
+.note-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.note-btn {
+  width: 36px;
+  height: 36px;
+  border: 2px solid #e2e8f0;
+  background: white;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.note-btn:hover {
+  background: linear-gradient(135deg, #eef2ff 0%, #faf5ff 100%);
+  border-color: #a5b4fc;
+  transform: scale(1.05);
+}
+
+.note-btn.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  transform: scale(1.1);
+}
+
+.commentaire-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.commentaire-group label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.commentaire-group textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.875rem;
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 70px;
+  transition: all 0.25s ease;
+  background: linear-gradient(135deg, #fafbff 0%, #ffffff 100%);
+}
+
+.commentaire-group textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+  background: white;
+}
+
+.commentaire-group textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* ========================================
+   RECAP TEXTAREA
+   ======================================== */
+
+.recap-textarea {
+  min-height: 180px;
+  resize: vertical;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* ========================================
+   FORM ACTIONS - STICKY FOOTER
+   ======================================== */
+
+.form-actions {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 1.5rem 2rem;
+  border-radius: 1.25rem;
+  box-shadow: 
+    0 -10px 40px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  bottom: 1.5rem;
+  z-index: 10;
+}
+
+.final-score {
+  font-size: 1.15rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.final-score strong {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-left: 0.75rem;
+}
+
+.btn-primary {
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 0.875rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ========================================
+   MESSAGES
+   ======================================== */
+
+.error-message {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 2px solid #fca5a5;
+  color: #b91c1c;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.error-message::before {
+  content: '⚠️';
+  font-size: 1.25rem;
+}
+
+.success-message {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid #86efac;
+  color: #166534;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.success-message::before {
+  content: '✅';
+  font-size: 1.25rem;
+}
+
+/* ========================================
+   RESULT CARD - SUCCESS SCREEN
+   ======================================== */
+
+.result-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 3.5rem;
+  border-radius: 2rem;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+  text-align: center;
+  max-width: 520px;
+  margin: 3rem auto;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.result-icon {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  animation: bounce 1s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.result-card h2 {
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 2.5rem;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.result-card h2::before {
+  display: none;
+}
+
+.result-score {
+  margin-bottom: 2.5rem;
+}
+
+.score-circle {
+  width: 180px;
+  height: 180px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  box-shadow: 
+    0 15px 35px rgba(99, 102, 241, 0.4),
+    0 0 0 8px rgba(99, 102, 241, 0.1);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4), 0 0 0 8px rgba(99, 102, 241, 0.1); }
+  50% { box-shadow: 0 20px 45px rgba(99, 102, 241, 0.5), 0 0 0 12px rgba(99, 102, 241, 0.15); }
+}
+
+.score-value {
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.score-label {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.result-details {
+  text-align: left;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+  padding: 1.75rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.result-details p {
+  margin-bottom: 0.75rem;
+  color: #475569;
+  font-size: 1.05rem;
+}
+
+.result-details p:last-child {
+  margin-bottom: 0;
+}
+
+.result-details strong {
+  color: #1e293b;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  .evaluation-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .evaluation-container h2 {
+    font-size: 1.75rem;
+  }
+
+  .form-section {
+    padding: 1.5rem;
+    border-radius: 1rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .critere-content {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 1.25rem;
+    position: static;
+    padding: 1.5rem;
+  }
+
+  .final-score {
+    text-align: center;
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+
+  .score-summary {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+    padding: 1.25rem;
+  }
+
+  .duree-input-group {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+
+  .result-card {
+    padding: 2rem;
+    margin: 1.5rem;
+  }
+
+  .score-circle {
+    width: 150px;
+    height: 150px;
+  }
+
+  .score-value {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .critere-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .critere-number {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .critere-label {
+    font-size: 0.95rem;
+  }
+
+  .note-buttons {
+    gap: 0.3rem;
+  }
+
+  .note-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.85rem;
+  }
+
+  .evaluation-container h2 {
+    font-size: 1.5rem;
+  }
+
+  .evaluation-container h2::before {
+    width: 4px;
+    height: 2rem;
+  }
+}
