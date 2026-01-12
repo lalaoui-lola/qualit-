@@ -1,6 +1,42 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import supabase from '../config/supabaseClient';
 import './ListeEvaluations.css';
+
+// Criteres pour Nouveau RDV (memes que EvaluationAppel.jsx)
+const CRITERES = [
+  { id: 'presentation', label: 'Se presenter', maxPoints: 5 },
+  { id: 'identite_client', label: "Confirmer l'identite du client", maxPoints: 5 },
+  { id: 'besoin_client', label: 'Comprendre le besoin client', maxPoints: 5 },
+  { id: 'etapes', label: 'Decrire les etapes sans details', maxPoints: 10 },
+  { id: 'localisation', label: 'Verifier la localisation', maxPoints: 5 },
+  { id: 'fixer_rdv', label: 'Fixer un RDV', maxPoints: 5 },
+  { id: 'sms_appel', label: "Envoyer un SMS pendant l'appel", maxPoints: 10 },
+  { id: 'documents_recap', label: 'Rappeler les documents et le recapitulatif', maxPoints: 5 },
+  { id: 'appel_confirmation', label: "Informer sur l'appel de confirmation", maxPoints: 5 },
+  { id: 'reception_sms', label: 'Verifier la reception du SMS', maxPoints: 10 },
+  { id: 'ton_voix', label: 'Le ton de la voix', maxPoints: 7 },
+  { id: 'ecoute_active', label: 'Ecoute active', maxPoints: 7 },
+  { id: 'reponse_questions', label: 'Repondre aux questions', maxPoints: 7 },
+  { id: 'intelligence_emotionnelle', label: 'Intelligence emotionnelle', maxPoints: 7 },
+  { id: 'adaptation_client', label: "S'adapter au niveau du client", maxPoints: 7 },
+];
+
+// Criteres pour Absent RDV (memes que EvaluationAbsentRdv.jsx)
+const CRITERES_ABSENT_RDV = [
+  { id: 'presentation', label: 'Se presenter', maxPoints: 5 },
+  { id: 'identite_client', label: "Confirmer l'identite du client", maxPoints: 5 },
+  { id: 'mention_rdv_avant', label: "Mentionner qu'il avait un RDV avant", maxPoints: 10 },
+  { id: 'proposer_autre_rdv', label: 'Proposer un autre RDV', maxPoints: 10 },
+  { id: 'importance_presence', label: "Lui faire comprendre l'importance de sa presence", maxPoints: 10 },
+  { id: 'sms_appel', label: "Envoyer un SMS pendant l'appel", maxPoints: 10 },
+  { id: 'recapitulatif_documents', label: 'Recapitulatif + document', maxPoints: 5 },
+  { id: 'reception_sms', label: 'Verifier la reception du SMS', maxPoints: 10 },
+  { id: 'ton_voix', label: 'Le ton de la voix', maxPoints: 7 },
+  { id: 'ecoute_active', label: 'Ecoute active', maxPoints: 7 },
+  { id: 'reponse_questions', label: 'Repondre aux questions', maxPoints: 7 },
+  { id: 'intelligence_emotionnelle', label: 'Intelligence emotionnelle', maxPoints: 7 },
+  { id: 'adaptation_client', label: "S'adapter au niveau du client", maxPoints: 7 },
+];
 
 function ListeEvaluations() {
   const [evaluations, setEvaluations] = useState([]);
@@ -51,14 +87,14 @@ function ListeEvaluations() {
       if (error) throw error;
       setTelepros(data || []);
     } catch (error) {
-      console.error('Erreur chargement tÃ©lÃ©pros:', error);
+      console.error('Erreur chargement télépros:', error);
     }
   };
 
   const fetchEvaluations = async () => {
     setLoading(true);
     try {
-      // RÃ©cupÃ©rer les Ã©valuations Nouveau RDV
+      // Récupérer les évaluations Nouveau RDV
       const { data: nouveauRdvData, error: nouveauRdvError } = await supabase
         .from('evaluations_appels')
         .select('*')
@@ -66,7 +102,7 @@ function ListeEvaluations() {
 
       if (nouveauRdvError) throw nouveauRdvError;
 
-      // RÃ©cupÃ©rer les Ã©valuations Absent RDV
+      // Récupérer les évaluations Absent RDV
       const { data: absentRdvData, error: absentRdvError } = await supabase
         .from('evaluations_absent_rdv')
         .select('*')
@@ -74,18 +110,18 @@ function ListeEvaluations() {
 
       if (absentRdvError) throw absentRdvError;
 
-      // Ajouter le type Ã  chaque Ã©valuation et fusionner
+      // Ajouter le type à chaque évaluation et fusionner
       const nouveauRdv = (nouveauRdvData || []).map(e => ({ ...e, type_evaluation: 'nouveau_rdv' }));
       const absentRdv = (absentRdvData || []).map(e => ({ ...e, type_evaluation: 'absent_rdv' }));
 
-      // Fusionner et trier par date de crÃ©ation
+      // Fusionner et trier par date de création
       const allEvaluations = [...nouveauRdv, ...absentRdv].sort((a, b) => 
         new Date(b.created_at) - new Date(a.created_at)
       );
 
       setEvaluations(allEvaluations);
     } catch (error) {
-      console.error('Erreur chargement Ã©valuations:', error);
+      console.error('Erreur chargement évaluations:', error);
     } finally {
       setLoading(false);
     }
@@ -152,7 +188,7 @@ function ListeEvaluations() {
     // Nouveaux seuils
     if (numScore >= 90) return 'score-excellent';    // 90-100 : Excellent (vert)
     if (numScore >= 75) return 'score-conforme';     // 75-89 : Conforme (bleu)
-    if (numScore >= 60) return 'score-ameliorer';    // 60-74 : Ã€ amÃ©liorer (orange)
+    if (numScore >= 60) return 'score-ameliorer';    // 60-74 : À améliorer (orange)
     return 'score-non-conforme';                      // <60 : Non conforme (rouge)
   };
 
@@ -160,13 +196,13 @@ function ListeEvaluations() {
     const numScore = parseFloat(score);
     if (numScore >= 90) return 'Excellent';
     if (numScore >= 75) return 'Conforme';
-    if (numScore >= 60) return 'Ã€ amÃ©liorer';
+    if (numScore >= 60) return 'À améliorer';
     return 'Non conforme';
   };
 
-  // Filtrer les Ã©valuations
+  // Filtrer les évaluations
   const filteredEvaluations = evaluations.filter(evaluation => {
-    // Filtre par date dÃ©but
+    // Filtre par date début
     if (filters.dateDebut && evaluation.date_evaluation) {
       if (new Date(evaluation.date_evaluation) < new Date(filters.dateDebut)) {
         return false;
@@ -185,7 +221,7 @@ function ListeEvaluations() {
       return false;
     }
 
-    // Filtre par type d'Ã©valuation
+    // Filtre par type d'évaluation
     if (filters.typeEvaluation) {
       const evalType = evaluation.type_evaluation || 'nouveau_rdv';
       if (filters.typeEvaluation !== evalType) {
@@ -193,7 +229,7 @@ function ListeEvaluations() {
       }
     }
 
-    // Filtre par recherche (nom client, tÃ©lÃ©phone)
+    // Filtre par recherche (nom client, téléphone)
     if (filters.recherche) {
       const searchLower = filters.recherche.toLowerCase();
       const nomClient = (evaluation.nom_client || '').toLowerCase();
@@ -209,7 +245,7 @@ function ListeEvaluations() {
       }
     }
 
-    // Filtre par catÃ©gorie de note
+    // Filtre par catégorie de note
     if (filters.categorieNote) {
       const categorie = getCategorieNote(evaluation.note_finale);
       if (filters.categorieNote !== categorie) {
@@ -229,12 +265,12 @@ function ListeEvaluations() {
   };
 
   const deleteEvaluation = async (id, typeEvaluation) => {
-    if (!window.confirm('ÃŠtes-vous sÃ»r de vouloir supprimer cette Ã©valuation ?')) {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette évaluation ?')) {
       return;
     }
 
     try {
-      // DÃ©terminer la table selon le type d'Ã©valuation
+      // Déterminer la table selon le type d'évaluation
       const tableName = typeEvaluation === 'absent_rdv' ? 'evaluations_absent_rdv' : 'evaluations_appels';
       
       const { error } = await supabase
@@ -300,7 +336,7 @@ function ListeEvaluations() {
         note_finale: noteFinale
       };
 
-      // Supprimer les champs qui ne doivent pas Ãªtre mis Ã  jour
+      // Supprimer les champs qui ne doivent pas être mis à jour
       delete updateData.id;
       delete updateData.created_at;
       delete updateData.type_evaluation;
@@ -312,7 +348,7 @@ function ListeEvaluations() {
 
       if (error) throw error;
 
-      // Mettre Ã  jour la liste locale
+      // Mettre à jour la liste locale
       setEvaluations(prev => prev.map(e => 
         e.id === editingEvaluation.id 
           ? { ...e, ...updateData, note_finale: noteFinale }
@@ -320,7 +356,7 @@ function ListeEvaluations() {
       ));
 
       closeEditModal();
-      fetchEvaluations(); // RafraÃ®chir pour avoir les donnÃ©es Ã  jour
+      fetchEvaluations(); // Rafraîchir pour avoir les données à jour
     } catch (error) {
       console.error('Erreur modification:', error);
       setEditError('Erreur lors de la modification');
@@ -339,7 +375,7 @@ function ListeEvaluations() {
       const numScore = parseFloat(score);
       if (numScore >= 90) return '#22c55e';  // Vert - Excellent
       if (numScore >= 75) return '#3b82f6';  // Bleu - Conforme
-      if (numScore >= 60) return '#f59e0b';  // Orange - Ã€ amÃ©liorer
+      if (numScore >= 60) return '#f59e0b';  // Orange - À améliorer
       return '#ef4444';                       // Rouge - Non conforme
     };
 
@@ -347,7 +383,7 @@ function ListeEvaluations() {
       const numScore = parseFloat(score);
       if (numScore >= 90) return 'Excellent';
       if (numScore >= 75) return 'Conforme';
-      if (numScore >= 60) return 'Ã€ amÃ©liorer';
+      if (numScore >= 60) return 'À améliorer';
       return 'Non conforme';
     };
 
@@ -397,7 +433,7 @@ function ListeEvaluations() {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Ã‰valuation - ${evaluation.nom_client || 'Sans nom'}</title>
+        <title>Évaluation - ${evaluation.nom_client || 'Sans nom'}</title>
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; background: white; color: #1e293b; }
@@ -423,7 +459,7 @@ function ListeEvaluations() {
       <body>
         <div class="header">
           <div class="logo">QualityCall</div>
-          <div class="title">Ã‰valuation d'appel - Nouveau RDV</div>
+          <div class="title">Évaluation d'appel - Nouveau RDV</div>
         </div>
 
         <div class="score-section">
@@ -435,18 +471,18 @@ function ListeEvaluations() {
         </div>
 
         <div class="section">
-          <h3 class="section-title">Informations gÃ©nÃ©rales</h3>
+          <h3 class="section-title">Informations générales</h3>
           <div class="info-grid">
             <div class="info-item">
               <div class="info-label">Agent</div>
               <div class="info-value">${getAgentName(evaluation.agent_id)}</div>
             </div>
             <div class="info-item">
-              <div class="info-label">TÃ©lÃ©pro</div>
+              <div class="info-label">Télépro</div>
               <div class="info-value">${getTeleprosName(evaluation.telepro_id)}</div>
             </div>
             <div class="info-item">
-              <div class="info-label">Date Ã©valuation</div>
+              <div class="info-label">Date évaluation</div>
               <div class="info-value">${formatDate(evaluation.date_evaluation)}</div>
             </div>
             <div class="info-item">
@@ -458,7 +494,7 @@ function ListeEvaluations() {
               <div class="info-value">${formatDate(evaluation.date_rdv)}</div>
             </div>
             <div class="info-item">
-              <div class="info-label">DurÃ©e appel</div>
+              <div class="info-label">Durée appel</div>
               <div class="info-value">${formatDuree(evaluation.duree_appel)}</div>
             </div>
             <div class="info-item">
@@ -466,27 +502,27 @@ function ListeEvaluations() {
               <div class="info-value">${evaluation.nom_client || '-'}</div>
             </div>
             <div class="info-item">
-              <div class="info-label">TÃ©lÃ©phone</div>
+              <div class="info-label">Téléphone</div>
               <div class="info-value">${evaluation.telephone_client || '-'}</div>
             </div>
           </div>
         </div>
 
         <div class="section">
-          <h3 class="section-title">Grille d'Ã©valuation</h3>
+          <h3 class="section-title">Grille d'évaluation</h3>
           ${criteresHtml}
         </div>
 
         ${evaluation.recapitulatif ? `
           <div class="section">
-            <h3 class="section-title">RÃ©capitulatif</h3>
+            <h3 class="section-title">Récapitulatif</h3>
             <div class="recap">${evaluation.recapitulatif}</div>
           </div>
         ` : ''}
 
         <div class="footer">
-          <p>Document gÃ©nÃ©rÃ© le ${new Date().toLocaleDateString('fr-FR')} Ã  ${new Date().toLocaleTimeString('fr-FR')}</p>
-          <p>QualityCall - SystÃ¨me d'Ã©valuation des appels</p>
+          <p>Document généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}</p>
+          <p>QualityCall - Système d'évaluation des appels</p>
         </div>
       </body>
       </html>
@@ -499,52 +535,18 @@ function ListeEvaluations() {
     };
   };
 
-  const CRITERES = [
-    { id: 'presentation', label: 'Se prÃ©senter', maxPoints: 5 },
-    { id: 'identite_client', label: "Confirmer l'identitÃ© du client", maxPoints: 5 },
-    { id: 'besoin_client', label: 'Comprendre le besoin client', maxPoints: 5 },
-    { id: 'etapes', label: 'DÃ©crire les Ã©tapes sans dÃ©tails', maxPoints: 10 },
-    { id: 'localisation', label: 'VÃ©rifier la localisation', maxPoints: 5 },
-    { id: 'fixer_rdv', label: 'Fixer un RDV', maxPoints: 5 },
-    { id: 'sms_appel', label: "Envoyer un SMS pendant l'appel", maxPoints: 10 },
-    { id: 'documents_recap', label: 'Rappeler les documents et le rÃ©capitulatif', maxPoints: 5 },
-    { id: 'appel_confirmation', label: "Informer sur l'appel de confirmation", maxPoints: 5 },
-    { id: 'reception_sms', label: 'VÃ©rifier la rÃ©ception du SMS', maxPoints: 10 },
-    { id: 'ton_voix', label: 'Le ton de la voix', maxPoints: 7 },
-    { id: 'ecoute_active', label: 'Ã‰coute active', maxPoints: 7 },
-    { id: 'reponse_questions', label: 'RÃ©pondre aux questions', maxPoints: 7 },
-    { id: 'intelligence_emotionnelle', label: 'Intelligence Ã©motionnelle', maxPoints: 7 },
-    { id: 'adaptation_client', label: "S'adapter au niveau du client", maxPoints: 7 },
-  ];
-
-  const CRITERES_ABSENT_RDV = [
-    { id: 'presentation', label: 'Se prÃ©senter', maxPoints: 5 },
-    { id: 'identite_client', label: "Confirmer l'identitÃ© du client", maxPoints: 5 },
-    { id: 'raison_absence', label: "Comprendre la raison de l'absence", maxPoints: 10 },
-    { id: 'fixer_rdv', label: 'Fixer un nouveau RDV', maxPoints: 10 },
-    { id: 'sms_appel', label: "Envoyer un SMS pendant l'appel", maxPoints: 10 },
-    { id: 'documents_recap', label: 'Rappeler les documents et le rÃ©capitulatif', maxPoints: 5 },
-    { id: 'appel_confirmation', label: "Informer sur l'appel de confirmation", maxPoints: 5 },
-    { id: 'reception_sms', label: 'VÃ©rifier la rÃ©ception du SMS', maxPoints: 10 },
-    { id: 'ton_voix', label: 'Le ton de la voix', maxPoints: 7 },
-    { id: 'ecoute_active', label: 'Ã‰coute active', maxPoints: 7 },
-    { id: 'reponse_questions', label: 'RÃ©pondre aux questions', maxPoints: 7 },
-    { id: 'intelligence_emotionnelle', label: 'Intelligence Ã©motionnelle', maxPoints: 7 },
-    { id: 'adaptation_client', label: "S'adapter au niveau du client", maxPoints: 7 },
-  ];
-
   return (
     <div className="liste-evaluations-container">
       <div className="liste-header">
-        <h2>Liste des Ã‰valuations - Nouveau RDV</h2>
-        <span className="evaluation-count">{filteredEvaluations.length} Ã©valuation(s)</span>
+        <h2>Liste des Évaluations - Nouveau RDV</h2>
+        <span className="evaluation-count">{filteredEvaluations.length} évaluation(s)</span>
       </div>
 
       {/* Filtres */}
       <div className="filters-section">
         <div className="filters-grid">
           <div className="filter-group">
-            <label>Date dÃ©but</label>
+            <label>Date début</label>
             <input
               type="date"
               name="dateDebut"
@@ -580,7 +582,7 @@ function ListeEvaluations() {
           </div>
 
           <div className="filter-group">
-            <label>Type d'Ã©valuation</label>
+            <label>Type d'évaluation</label>
             <select
               name="typeEvaluation"
               value={filters.typeEvaluation}
@@ -593,7 +595,7 @@ function ListeEvaluations() {
           </div>
 
           <div className="filter-group">
-            <label>CatÃ©gorie note</label>
+            <label>Catégorie note</label>
             <select
               name="categorieNote"
               value={filters.categorieNote}
@@ -602,7 +604,7 @@ function ListeEvaluations() {
               <option value="">Toutes les notes</option>
               <option value="excellent">Excellent (â‰¥90)</option>
               <option value="conforme">Conforme (75-89)</option>
-              <option value="ameliorer">Ã€ amÃ©liorer (60-74)</option>
+              <option value="ameliorer">À améliorer (60-74)</option>
               <option value="non-conforme">Non conforme (&lt;60)</option>
             </select>
           </div>
@@ -619,7 +621,7 @@ function ListeEvaluations() {
                 name="recherche"
                 value={filters.recherche}
                 onChange={handleFilterChange}
-                placeholder="Nom client, tÃ©lÃ©phone, agent..."
+                placeholder="Nom client, téléphone, agent..."
               />
             </div>
           </div>
@@ -630,7 +632,7 @@ function ListeEvaluations() {
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
             <path d="M3 3v5h5"/>
           </svg>
-          RÃ©initialiser
+          Réinitialiser
         </button>
       </div>
 
@@ -638,7 +640,7 @@ function ListeEvaluations() {
       {loading ? (
         <div className="loading-state">
           <div className="spinner"></div>
-          <p>Chargement des Ã©valuations...</p>
+          <p>Chargement des évaluations...</p>
         </div>
       ) : filteredEvaluations.length === 0 ? (
         <div className="empty-state">
@@ -648,8 +650,8 @@ function ListeEvaluations() {
             <line x1="12" y1="18" x2="12" y2="12"/>
             <line x1="9" y1="15" x2="15" y2="15"/>
           </svg>
-          <h3>Aucune Ã©valuation trouvÃ©e</h3>
-          <p>Modifiez vos filtres ou crÃ©ez une nouvelle Ã©valuation</p>
+          <h3>Aucune évaluation trouvée</h3>
+          <p>Modifiez vos filtres ou créez une nouvelle évaluation</p>
         </div>
       ) : (
         <div className="evaluations-table-wrapper">
@@ -657,11 +659,11 @@ function ListeEvaluations() {
             <thead>
               <tr>
                 <th>Type</th>
-                <th>Date Ã©valuation</th>
+                <th>Date évaluation</th>
                 <th>Agent</th>
-                <th>TÃ©lÃ©pro</th>
+                <th>Télépro</th>
                 <th>Client</th>
-                <th>DurÃ©e</th>
+                <th>Durée</th>
                 <th>Note</th>
                 <th>Actions</th>
               </tr>
@@ -696,7 +698,7 @@ function ListeEvaluations() {
                       <button 
                         className="btn-action btn-view"
                         onClick={() => openDetails(evaluation)}
-                        title="Voir les dÃ©tails"
+                        title="Voir les détails"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -743,12 +745,12 @@ function ListeEvaluations() {
         </div>
       )}
 
-      {/* Modal dÃ©tails */}
+      {/* Modal détails */}
       {selectedEvaluation && (
         <div className="modal-overlay" onClick={closeDetails}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>DÃ©tails de l'Ã©valuation</h3>
+              <h3>Détails de l'évaluation</h3>
               <button className="btn-close" onClick={closeDetails}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"/>
@@ -765,18 +767,18 @@ function ListeEvaluations() {
               </div>
 
               <div className="detail-section">
-                <h4>Informations gÃ©nÃ©rales</h4>
+                <h4>Informations générales</h4>
                 <div className="detail-grid">
                   <div className="detail-item">
                     <span className="detail-label">Agent</span>
                     <span className="detail-value">{getAgentName(selectedEvaluation.agent_id)}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">TÃ©lÃ©pro</span>
+                    <span className="detail-label">Télépro</span>
                     <span className="detail-value">{getTeleprosName(selectedEvaluation.telepro_id)}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">Date Ã©valuation</span>
+                    <span className="detail-label">Date évaluation</span>
                     <span className="detail-value">{formatDate(selectedEvaluation.date_evaluation)}</span>
                   </div>
                   <div className="detail-item">
@@ -788,7 +790,7 @@ function ListeEvaluations() {
                     <span className="detail-value">{formatDate(selectedEvaluation.date_rdv)}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">DurÃ©e appel</span>
+                    <span className="detail-label">Durée appel</span>
                     <span className="detail-value">{formatDuree(selectedEvaluation.duree_appel)}</span>
                   </div>
                   <div className="detail-item">
@@ -796,7 +798,7 @@ function ListeEvaluations() {
                     <span className="detail-value">{selectedEvaluation.nom_client || '-'}</span>
                   </div>
                   <div className="detail-item">
-                    <span className="detail-label">TÃ©lÃ©phone</span>
+                    <span className="detail-label">Téléphone</span>
                     <span className="detail-value">{selectedEvaluation.telephone_client || '-'}</span>
                   </div>
                 </div>
@@ -822,7 +824,7 @@ function ListeEvaluations() {
                         <polyline points="7 10 12 15 17 10"/>
                         <line x1="12" y1="15" x2="12" y2="3"/>
                       </svg>
-                      TÃ©lÃ©charger l'audio
+                      Télécharger l'audio
                     </a>
                   </div>
                 ) : (
@@ -832,15 +834,15 @@ function ListeEvaluations() {
                       <circle cx="6" cy="18" r="3"/>
                       <circle cx="18" cy="16" r="3"/>
                     </svg>
-                    <p>Aucun fichier audio n'a Ã©tÃ© uploadÃ© pour cette Ã©valuation</p>
+                    <p>Aucun fichier audio n'a été uploadé pour cette évaluation</p>
                   </div>
                 )}
               </div>
 
               <div className="detail-section">
-                <h4>Grille d'Ã©valuation</h4>
+                <h4>Grille d'évaluation</h4>
                 <div className="criteres-detail-list">
-                  {CRITERES.map((critere, index) => {
+                  {(selectedEvaluation.type_evaluation === 'absent_rdv' ? CRITERES_ABSENT_RDV : CRITERES).map((critere, index) => {
                     const note = selectedEvaluation[`note_${critere.id}`] || 0;
                     const commentaire = selectedEvaluation[`commentaire_${critere.id}`];
                     const percentage = (note / critere.maxPoints) * 100;
@@ -871,7 +873,7 @@ function ListeEvaluations() {
 
               {selectedEvaluation.recapitulatif && (
                 <div className="detail-section">
-                  <h4>RÃ©capitulatif</h4>
+                  <h4>Récapitulatif</h4>
                   <p className="recap-text">{selectedEvaluation.recapitulatif}</p>
                 </div>
               )}
